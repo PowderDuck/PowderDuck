@@ -11,11 +11,5 @@ namespace NetAPIExp
         {
 
         }
-
-        /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB;Database=Users;Trusted_Connection=True");
-        }*/
     }
 }
