@@ -1,0 +1,17 @@
+Properties {
+_MainTex ("Albedo", 2D) = "white" {}
+_EmissionMap ("Emission Map", 2D) = "black" {}
+[HDR] _EmissionColor ("Emission Color", Color) = (0,0,0)
+}
+
+...
+
+fixed4 albedo = tex2D(_MainTex, i.uv);
+
+... do some lighting ...
+half4 output = half4(albedo.rgb * lighting.rgb, albedo.a);
+
+half4 emission = tex2D(_EmissionMap, i.uv) * _EmissionColor;
+output.rgb += emission.rgb;
+
+return output; 
