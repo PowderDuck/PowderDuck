@@ -1,0 +1,5 @@
+pg_dump databaseName > db.sql;
+
+createdb databaseName -E UTF8;
+
+psql -d databaseName -f db.sql;
