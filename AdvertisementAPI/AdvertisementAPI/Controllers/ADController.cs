@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System.Net;
+using System.Numerics;
 
 namespace AdvertisementAPI.Controllers
 {
@@ -49,6 +51,62 @@ namespace AdvertisementAPI.Controllers
             catch { }
 
             return new BadRequestResult();
+        }
+
+        [HttpGet("resetStatistic")]
+        public async Task<ActionResult<string>> ResetStatistic(int adID = -1, string ticket = "")
+        {
+            try
+            {
+                if(ticket == "")
+                {
+                    int ticketLength = 8;
+                    byte[] ticketBytes = new byte[ticketLength];
+                    Random randomizer = new Random();
+
+                    for (int i = 0; i < ticketLength; i++)
+                    {
+                        ticketBytes[i] = (byte)randomizer.Next(65, 90);
+                    }
+
+                    string requestTicket = System.Text.Encoding.ASCII.GetString(ticketBytes);
+                    using(StreamWriter writer = new StreamWriter("Ticket.txt"))
+                    {
+                        await writer.WriteAsync($"{requestTicket}:{adID}");
+                        writer.Close();
+                    }
+
+                    return new ActionResult<string>(requestTicket);
+                }
+            
+                using(StreamReader reader = new StreamReader("Ticket.txt"))
+                {
+                    string validTicket = await reader.ReadToEndAsync();
+                    string phrase = validTicket.Split(':')[0];
+                    int targetID = int.Parse(validTicket.Split(':')[1]);
+
+                    if(validTicket != null && ticket == phrase)
+                    {
+                        List<AdStatistic> statistics = context.ADStatistics.Where(i => (targetID < 0f ? i.ID != targetID : i.ID == targetID)).ToList();
+                        for (int i = 0; i < statistics.Count; i++)
+                        {
+                            statistics[i].VIEWS = 0;
+                            statistics[i].CLICKS = 0;
+                        }
+
+                        await context.SaveChangesAsync();
+
+                        return new ActionResult<string>(validTicket);
+                    }
+
+                    reader.Close();
+
+                    return BadRequest();
+                }
+            }
+            catch { }
+
+            return BadRequest();
         }
 
         [HttpGet("removeAD")]
