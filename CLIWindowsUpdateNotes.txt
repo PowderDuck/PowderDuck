@@ -1,3 +1,7 @@
 Install-Module PSWindowsUpdate;
 
 Get-WindowsUpdate -AcceptAll -Install -AutoReboot;
+
+//Resetting the Windows Apps;
+
+Get-AppXPackage -allusers | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register "$($_. InstallLocation)\AppXManifest. xml"}
