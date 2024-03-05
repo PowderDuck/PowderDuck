@@ -1,0 +1,11 @@
+//Creating the new network connection;
+
+netsh wlan export profile name="ProfileName" key=clear;
+
+//Changing the respective settings inside the ProfileName.xml file;
+
+netsh wlan add profile name="NewProfileName";
+
+//Connecting to the network utilizing the newly created profile;
+
+netsh wlan connect profile="NewProfileName" ssid="NetworkName";
