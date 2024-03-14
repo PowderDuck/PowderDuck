@@ -1,0 +1,7 @@
+//@page "/"
+
+//Enabling the realtime alterations to the page;
+//@rendermode InteractiveServer
+
+//Disabling the reconnection error caused by the InteractiveServer;
+<div id="components-reconnect-modal" style="display:none"> </div>
