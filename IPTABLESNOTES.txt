@@ -1,0 +1,93 @@
+string source = "https://sudamtm.medium.com/iptables-a-comprehensive-guide-276b8604eff1";
+
+string[] iptablesChains = new string[]
+{
+   "PREROUTING : Rules in this chain apply to packets as they just arrive on the network interface;", 
+   "INPUT : Rules in this chain apply to packets just before they are given to a local process;", 
+   "OUTPUT : Rules in this chain apply to packets just after they have been produced by a process;", 
+   "FORWARD : Rules in this chain apply to packets that are routed through the current host;", 
+   "POSTROUTING : Rules in this chain apply to packets as they just leave the network interface;"
+};
+
+//Example;
+
+iptables -A INPUT -s 192.168.0.105 -j ACCEPT;
+
+iptables --table filter --append INPUT -s 59.45.175.62 -j REJECT (or DROP for the rejection without the error);
+iptables --table filter --delete INPUT -s 59.45.175.62 -j REJECT; //DELETE THE RULE;
+iptables --table filter --replace INPUT -s 59.45.175.62 -j ACCEPT; //REPLACE THE RULE;
+
+//IPTABLES involves the list of the rules, with the indices starting from 1 (0), therefore, the rule could be inserted directly into the index;
+
+iptables --table filter --insert INPUT {INDEX} -s 59.45.175.62 -j ACCEPT;
+
+//Change the default IPTABLES chain rule;
+
+iptables --policy INPUT DROP;
+
+//Target the particular port;
+
+iptables -A INPUT --protocol tcp --match tcp --dport 123 -s 59.45.175.62/24 -j DROP;
+iptables -A INPUT --protocol tcp --match multiport --dports 22,443 -s 59.45.175.62/24 -j DROP; //Multiple Ports;
+iptables -A INPUT --protocol tcp --match multiport ! --dports 22,80,443 -j DROP; //Affecting all ports except the specified ports;
+
+string[] iptablesTableChainMappings = new string[]
+{
+   "filter : INPUT, OUTPUT, FORWARD;", 
+   "security : INPUT, OUTPUT, FORWARD;", 
+   "raw : PREROUTING, OUTPUT;", 
+   "nat : PREROUTING, OUTPUT, POSTROUTING;", 
+   "mangle : PREROUTING, OUTPUT, INPUT, FORWARD, POSTROUTING;"
+};
+
+string[] iptablesPacketStates = new string[]
+{
+   "NEW : This state represents the very first packet of a connection;", 
+   "ESTABLISHED : This state is used for packets that are part of an existing connection; For a connection to be in this state, it should have received a reply from the other host", 
+   "RELATED : This state is used for connections that are related to another;", 
+   "INVALID : This state means the packet does not have a proper state; This may be due to several reasons, such as the system running out of memory or due to some types of ICMP traffic;", 
+   "UNTRACKED : Any packets exempted from connection tracking in the raw table with the NOTRACK target end up in this state;", 
+   "DNAT : This is a virtual state used to represent packets whose destination address was changed by rules in the NAT table;", 
+   "SNAT : Similarly to DNAT, this state represents packets whose source address was changed;"
+};
+
+//Affect the packets with the specified states;
+
+iptables -A INPUT --match conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT; //conntrack provides the information regarding the state and cache of the packet;
+
+//Affect the packets with the specified headers;
+
+iptables -A INPUT --protocol tcp --match tcp --tcp-flags ALL FIN,PSH,URG -j DROP;
+
+//Rate limiting in IPTABLES, where --limit-burst is the buffer size;
+
+iptables -A INPUT -p tcp --match limit --limit 1/sec --limit-burst 1 -j ACCEPT;
+
+//Dynamic rate limiting;
+
+iptables -A INPUT -p tcp --match tcp --dport 22 --match conntrack --ctstate NEW --match recent --set --name SSHLIMIT --update --seconds 180 --hitcount 5 --name SSH 
+--rsource -j DROP;
+
+//IPTABLES packet logging;
+
+iptables -A INPUT -p tcp --match tcp --tcp-flags FIN,SYN FIN,SYN -j LOG --log-prefix={folder}; //Or view the logs in either /var/log/syslog or /var/log/messages;
+
+//IPTABLES redirection;
+
+iptables --table NAT -A PREROUTING -p tcp --dport 5555 -j REDIRECT --to 8080;
+
+//Configure Proxy;
+
+//Capturing the packets flowing into the address 59.45.175.62:866 with the address 192.168.0.104:7777;
+
+iptables --in-interface tun0 --table NAT -A PREROUTING --destination 59.45.175.62 --dport 866 -j DNAT --to-destination 192.168.0.104:7777; 
+
+//After the processing of the packet, sending the packet to the initial destination of 59.45.175.62;
+
+iptables --table NAT -A POSTROUTING -p tcp --destination 192.168.0.104 --dport 7777 -j SNAT --to-source 59.45.175.62;
+
+//...;
+
+iptables -t NAT -A POSTROUTING -p tcp --dport 866 -j MASQUERADE;
+
+
