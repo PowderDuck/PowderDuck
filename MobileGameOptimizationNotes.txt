@@ -1,0 +1,15 @@
+string source = "https://www.youtube.com/watch?v=yuCFupLJ8kY";
+
+string[] methods = new string[]
+{
+   "Occlusion Culling", 
+   "Mesh Combination", 
+   "Lightmap Baking", 
+   "Spriter Classes (Combinatory Sheets)", 
+   "Mobile Shaders", 
+   "Keyframe Reduction", 
+   "Screen Scale", 
+   "Reflections (Baked Reflections)", 
+   "Light Probes", 
+   "Separate Canvas (Each alteration to the canvas causes the refresh of all the elements inside the Canvas);"
+};
