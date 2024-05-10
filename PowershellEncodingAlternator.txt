@@ -1,0 +1,1 @@
+$PSDefaultParameterValues["*:Encoding"] = "ascii"; //Or UTF8, UTF7, UTF32, DEFAULT, OEM;
