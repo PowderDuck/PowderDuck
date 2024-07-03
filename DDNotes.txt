@@ -1,0 +1,51 @@
+//Copy file to another file;
+
+dd if=file_to_copy.txt of=copied_file.txt;
+
+dd if=file_to_copy.txt of=copied_file.txt conv=notrunc; //Disable output file override;
+
+dd if=file_to_copy.txt of=copied_file.txt conv=append; //Appends the input data to the output file;
+
+dd if=file_to_copy.txt of=copied_file.txt conv=lcase; //Lower case;
+dd if=file_to_copy.txt of=copied_file.txt conv=ucase; //Upper case;
+
+dd if=/dev/sda1 of=partition_backup.img; //Create backup of the partition to the img file;
+
+dd if=partition_backup.img of=/dev/sda5; //Converting the img to partition;
+
+dd if=/dev/sda of=entire_drive.img; //Backing up the entire hard drive;
+dd if=entire_drive.img of=/dev/sda; //Converting the img into the constituent hard drive;
+
+dd if=/dev/sda of=master_boot.img bs=512 count=1; //Creating the backup of the master boot record, first 512 bytes of data;
+dd if=master_boot.img of=/dev/sda bs=512 count=1; //Converting the img to the hard drive;
+
+dd if=/dev/cdrom of=cdrom_output.iso; //Copying the content of the CD / DVD drive;
+
+dd if=/dev/sda bs=1M | gzip -c -9 > output.dd.gz; //Compressing the data from the dd into the gzip; //-c outputs to stdout, -9 maximum level of compression;
+
+dd if=file_to_copy.txt of=copied_file.txt skip=100; //Skips the first 100 bytes of the data in the input file;
+
+dd if=/dev/zero of=/dev/sda bs=1M; //Removing the data from the device, and overriding the content with zeros;
+dd if=/dev/urandom of=/dev/sda bs=1M; //Overriding the original data with the random data, better for the encryption setup;
+dd if=/dev/random of=/dev/sda bs=1M; //Slower than urandom, however, produces higher quality random data;
+
+dd if=distribution.iso of=/dev/sdX bs=4M status=progress; //Creating the bootable USB drive, with the display of the statistics;
+
+
+
+string[] statusOptions = new string[]
+{
+   "none : displays nothing but the error messages;", 
+   "noxfer : suppresses the final transfer statistics;", 
+   "progress : periodically displays the transfer statistics;"
+};
+
+string[] convOptions = new string[]
+{
+   "nocreat : do not create the output file;", 
+   "notrunc : do not override the output file;", 
+   "noerror : continue after the errors;", 
+   "append : appends the data to the output file;", 
+   "lcase : replace the input data to lower case data;", 
+   "ucase : replace the input data to upper case data;"
+};
