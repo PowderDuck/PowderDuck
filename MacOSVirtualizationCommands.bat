@@ -11,3 +11,4 @@ set vmName=%2
 
 %vBoxPath% setextradata %vmName% "VBoxInternal/Devices/smc/0/Config/DeviceKey" "ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc"
 
+%vBoxPath% setextradata %vmName% "VBoxInternal2/EfiGraphicsResolution" "1280x720"
