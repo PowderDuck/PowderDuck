@@ -1,0 +1,39 @@
+//Create deep link on Android;
+//In AndroidManifest.xml, add the following entry;
+//Category BROWSABLE enables the accessibility of the application through the web browser;
+
+<activity
+	android:name="com.example.android.ThesebootsActivity"
+	android:label="@string/title_boots" >
+	<intent-filter android:label="@string/filter-boots">
+		<action android:name="android.intent.action.VIEW" />
+		<category android:name="android.intent.category.DEFAULT" />
+		<category android:name="android.intent.category.BROWSABLE" />
+
+	<!-- Registers the deep link navigating to http://theseboots.com/boots -->
+
+		<data android:scheme="http"
+		      android:host="theseboots.com"
+		      android:pathPrefix="/boots" />a
+	</intent-filter>
+
+	<intent-filter android:label="@string/filter-scheme-boots">
+		<action android:name="android.intent.action.VIEW" />
+		<action android:name="android.intent.category.DEFAULT" />
+		<action android:name="android.intent.category.BROWSABLE" />
+
+	<!-- Registers the deep link navigating to theseboots://boots -->
+
+		<data android:scheme="theseboots"
+		      android:host="boots" />
+	</intent-filter>
+</activity>
+
+//Create deep link on Windows; Creating the registry key in HKEY_CLASSES_ROOT registry;
+//reg query HKEY_CLASSES_ROOT; 
+
+reg add HKEY_CLASSES_ROOT\%SCHEME% /t REG_SZ /d "URL : Boots Protocol";
+reg add HKEY_CLASSES_ROOT\boots /v "URL Protocol" /t REG_SZ;
+reg add HKEY_CLASSES_ROOT\boots\shell\open\command /t REG_SZ /d "C:\Users\PowderDuck\AppData\Roaming\Telegram Desktop\Telegram.exe -- %1"; //No quotation marks;
+
+//Navigate to the following URLs in the browser : boots:, boots:///;
