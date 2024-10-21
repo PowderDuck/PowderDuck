@@ -1,0 +1,3 @@
+//window.opener, returns the reference to the window that created the current window;
+var win = window.open("", "", 400, 400);
+win.opener.document.getElementById("theseboots").innerHTML = "here";
